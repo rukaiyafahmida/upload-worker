@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  redis_broker:
+    image: redis:latest
+    container_name: redis_broker
+    restart: always
+    ports:
+     - "8064:8064"
+    command: redis-server --port 8064 --save 60 1 
+    volumes:
+      - data-volume:/data
+
+volumes:
+  data-volume:

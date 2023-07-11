@@ -1,27 +1,21 @@
 from flask import Flask, render_template, request
-import redis
-
-
-
-redis_client = redis.Redis(host='localhost', port=6379)
-
+from redis_functions import RedisHandler
+import ulid
 
 
 app = Flask(__name__)
 
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.post('/')
 def upload_document():
     if request.method == 'POST':
         # Handle document upload
         document = request.files['document']
         k = int(request.form['k'])
-
-        # Store the document in Redis for processing
-        redis_client.rpush('documents', document.read())
-        redis_client.rpush('k_values', k)
-
+        id = ulid.new().timestamp().str
+        queue = RedisHandler()
+        queue.add_to_proccesing(id, k, document.read())
         return 'Document uploaded and queued for processing.'
 
     # Render the Jinja template for document upload
