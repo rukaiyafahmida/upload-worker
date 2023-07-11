@@ -10,7 +10,6 @@ REDIS_PORT=int(os.getenv("REDIS_PORT"))
 REDIS_DB=int(os.getenv("REDIS_DB"))
 
 PROCESSING_QUEUE=os.getenv("PROCESSING_QUEUE")
-COMPLETED_QUEUE=os.getenv("COMPLETED_QUEUE")
 
 
 class RedisHandler():
@@ -19,11 +18,12 @@ class RedisHandler():
         host=REDIS_HOST,
         port=REDIS_PORT,
         db=REDIS_DB,
+        queue_name=PROCESSING_QUEUE,
         decode_responses=True
     )
-    def add_to_proccesing(self, id, k, data):
+    def proccesing_queue_push(self, id, k, data):
         msg = {'id': id, 'k' : k, 'data': data}
-        self.client.rpush(PROCESSING_QUEUE, dumps(msg))
+        self.client.rpush(self.queue_name, dumps(msg))
 
 
 
