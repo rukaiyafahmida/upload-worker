@@ -1,7 +1,7 @@
 FROM python:3.11.4-slim
 
 # Set working directory
-WORKDIR /app
+WORKDIR /worker
 
 # Copy requirements.txt to app directory
 COPY ./requirements.txt ./requirements.txt
@@ -12,7 +12,6 @@ RUN pip install -r requirements.txt
 # Copy all files to app directory
 COPY . .
 
+CMD [ "python", "processor.py" ]
 
-EXPOSE 5000
-
-CMD gunicorn --worker-class gevent --workers 8 --bind 0.0.0.0:5000 wsgi:app --max-requests 10000 --timeout 5 --keep-alive 5 --log-level info
+# CMD gunicorn --worker-class gevent --workers 8 --bind 0.0.0.0:5000 wsgi:app --max-requests 10000 --timeout 5 --keep-alive 5 --log-level info

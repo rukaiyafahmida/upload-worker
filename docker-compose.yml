@@ -5,11 +5,40 @@ services:
     image: redis:latest
     container_name: redis_broker
     restart: always
-    ports:
-     - "8064:8064"
+    expose:
+     - 8064
     command: redis-server --port 8064 --save 60 1 
     volumes:
       - data-volume:/data
+    networks:
+      - internal_network
+
+  worker:
+    build: ./worker
+    container_name: worker
+    restart: always
+    depends_on:
+      - redis_broker
+    networks:
+      - internal_network
+
+
+  uploader:
+    build: ./uploader_app
+    container_name: uploader
+    restart: always
+    ports:
+      - 5000:5000
+    depends_on:
+      - redis_broker
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    name: internal_network
+    driver: bridge
+
 
 volumes:
   data-volume:
