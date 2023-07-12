@@ -10,6 +10,7 @@ REDIS_PORT=int(os.getenv("REDIS_PORT"))
 REDIS_DB=int(os.getenv("REDIS_DB"))
 
 PROCESSING_QUEUE=os.getenv("PROCESSING_QUEUE")
+EXPIRATION_FOR_OUTPUT=int(os.getenv("EXPIRATION_FOR_OUTPUT"))
 
 class RedisHandler():
     def __init__(self):
@@ -17,9 +18,8 @@ class RedisHandler():
         host=REDIS_HOST,
         port=REDIS_PORT,
         db=REDIS_DB,
-        queue_name=PROCESSING_QUEUE,
-        decode_responses=True
-    )
+        decode_responses=True)
+        self.queue_name=PROCESSING_QUEUE
         
     def enqueue(self, message):
         self.client.rpush(self.queue_name, message)
@@ -33,5 +33,6 @@ class RedisHandler():
     
     def set_output(self, id, output):
         self.client.set(name=id, value=output)
+        self.client.expire(name=id,time=EXPIRATION_FOR_OUTPUT)
 
 

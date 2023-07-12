@@ -18,17 +18,21 @@ class RedisHandler():
         host=REDIS_HOST,
         port=REDIS_PORT,
         db=REDIS_DB,
-        queue_name=PROCESSING_QUEUE,
-        decode_responses=True
-    )
+        decode_responses=True)
+        self.queue_name=PROCESSING_QUEUE
+        
     def proccesing_queue_push(self, id, k, data):
-        msg = {'id': id, 'k' : k, 'data': data}
+        msg = {'id': id, 'k' : k, 'data': data.decode('utf-8')}
         self.client.rpush(self.queue_name, dumps(msg))
     
+    def key_exists(self, id):
+        if self.client.exists(id) == 0:
+            return False
+        return True
+
     def get_output(self, id):
         output = self.client.get(name=id)
         return output
-
-
+    
 
 

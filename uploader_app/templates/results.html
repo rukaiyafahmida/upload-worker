@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+</head>
+<body>
+    <h1>Result</h1>
+    <p>Use your {{ id }} to get the Output:</p>
+    <form action="/result/{{ id }}" method="post">
+        <label for="idInput">Enter ID:</label>
+        <input type="text" id="idInput" name="id" required>
+        <button type="submit">Get Output</button>
+    </form>
+    {% if id and output %}
+        {% if output == -1 %}
+            <p>Not yet processed, please wait.</p>
+        {% else %}
+            <p>There are {{ output }} words with that length. </p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

@@ -1,5 +1,4 @@
 from redis_function import RedisHandler
-import re
 from json import loads
 
 
@@ -17,12 +16,6 @@ def count_words_with_length(document, k):
 
 
 
-def count_words_with_length2(document, k):
-    pattern = r'\b\w{' + str(k) + r'}\b'
-    matches = re.findall(pattern, document)
-    count = len(matches)
-    return count
-
 
 def process_document(message_json):
     message = loads(message_json)
@@ -32,8 +25,7 @@ def process_document(message_json):
     try:
         count =  count_words_with_length(document=data, k=k)
     except Exception as e:
-        #TODO
-        pass
+        print(f"Error occured while processing. Error: {e}", flush=True)
     if count:
         redis_handler.acknowledge(message=message_json)
 
@@ -46,7 +38,8 @@ def main():
 
     while True:
         message_json = redis_handler.dequeue()  # this blocks until an item is received
-        process_document(message_json)
+        if message_json:
+            process_document(message_json)
 
 
 if __name__ == '__main__':
