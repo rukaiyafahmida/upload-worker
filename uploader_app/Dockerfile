@@ -2,10 +2,17 @@ FROM python:3.11.4-slim
 
 WORKDIR /app
 
-RUN pipenv install --system --skip-lock
+# Copy requirements.txt to app directory
+COPY ./requirements.txt ./requirements.txt
 
-RUN pip install gunicorn[gevent]
+# install requirements
+RUN pip install -r requirements.txt
+
+# Copy all files to app directory
+COPY . .
 
 EXPOSE 5000
 
-CMD gunicorn --worker-class gevent --workers 8 --bind 0.0.0.0:5000 wsgi:app --max-requests 10000 --timeout 5 --keep-alive 5 --log-level info
+CMD [ "bash","gunicorn.sh" ]
+
+

@@ -24,6 +24,11 @@ class RedisHandler():
     def proccesing_queue_push(self, id, k, data):
         msg = {'id': id, 'k' : k, 'data': data}
         self.client.rpush(self.queue_name, dumps(msg))
+    
+    def get_output(self, id):
+        output = self.client.get(name=id)
+        return output
+
 
 
 
